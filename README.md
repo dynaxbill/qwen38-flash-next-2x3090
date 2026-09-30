@@ -5,6 +5,10 @@
 <p align="center">One request: 131,072 input tokens, then 2,048 output tokens, with the <a href="configs/agent-128k.env">agent 128K profile</a>. The <a href="configs/fast-256k.env">fast 256K profile</a> reads a full 260,096-token window in 90.8 s (2,865 input tok/s).</p>
 <p align="center"><a href="https://huggingface.co/albucino/Qwen3.8-Flash-Next-W4A16-FP8PLE"><strong>Download the checkpoint</strong></a></p>
 
+> **Only one GPU?** [qwen38-flash-next-3090](https://github.com/DominikBucko/qwen38-flash-next-3090) runs the
+> same checkpoint on a **single RTX 3090 with 64 GB of RAM**: 2,100+ tok/s prefill, ~50 tok/s decode, 128K
+> context. The CPU computes the experts that do not fit on the card.
+
 Qwen3.8-Flash-Next, with its high sparsity and low active param count is a great candidate for CPU offloading under right setup. This build keeps the
 full expert set and an FP8 Ngram table in system memory, caches active (LRU) experts on
 the GPUs, and uses a small MTP3 drafter to recover decode speed.
