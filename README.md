@@ -6,8 +6,8 @@
 <p align="center"><a href="https://huggingface.co/albucino/Qwen3.8-Flash-Next-W4A16-FP8PLE"><strong>Download the checkpoint</strong></a></p>
 
 > **Only one GPU?** [qwen38-flash-next-3090](https://github.com/DominikBucko/qwen38-flash-next-3090) runs the
-> same checkpoint on a **single RTX 3090 with 64 GB of RAM**: 2,100+ tok/s prefill, ~50 tok/s decode, 128K
-> context. The CPU computes the experts that do not fit on the card.
+> same checkpoint on a **single RTX 3090 with 64 GB of RAM**: up to 2,100 tok/s prefill, 43–51 tok/s decode,
+> 128K context. The CPU computes the experts that do not fit on the card.
 
 Qwen3.8-Flash-Next, with its high sparsity and low active param count is a great candidate for CPU offloading under right setup. This build keeps the
 full expert set and an FP8 Ngram table in system memory, caches active (LRU) experts on

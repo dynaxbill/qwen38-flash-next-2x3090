@@ -36,7 +36,7 @@ custom vLLM runtimes; pick the one for your hardware:
 
 | Hardware | Runtime (GitHub) | Prefill, 131K prompt | Decode | Context |
 |---|---|---:|---:|---:|
-| **1× RTX 3090 24 GB + 64 GB RAM** | **[qwen38-flash-next-3090](https://github.com/DominikBucko/qwen38-flash-next-3090)** | **2,106 tok/s** | **47–50 tok/s** | 135,168 |
+| **1× RTX 3090 24 GB + 64 GB RAM** | **[qwen38-flash-next-3090](https://github.com/DominikBucko/qwen38-flash-next-3090)** | **up to 2,106 tok/s** | **43–51 tok/s** | 135,168 |
 | 2× RTX 3090 24 GB + 128 GB RAM | [qwen38-flash-next-2x3090](https://github.com/DominikBucko/qwen38-flash-next-2x3090#run-it) | 3,029 tok/s | 109.8 tok/s | up to 262,144 |
 
 ## New: a single RTX 3090 with 64 GB of RAM
@@ -47,13 +47,14 @@ the attention and dense weights, the 32 most-used experts of every layer and an 
 3.05 GB); **the CPU computes the other experts straight from RAM** during decode, while prefill streams them
 through the GPU. The FP8 PLE table is read in place from these files on NVMe. The weights are unchanged.
 
-| One RTX 3090, machine limited to 64 GB RAM | First token | Prefill | Decode |
+| One RTX 3090, machine limited to 64 GB RAM (2 runs) | First token | Prefill | Decode |
 |---|---:|---:|---:|
-| 131,099 + 512 tokens | 62.2 s | **2,106 tok/s** | **47.4 tok/s** |
-| 32,799 + 512 | 15.3 s | 2,141 tok/s | 50.3 tok/s |
-| 8,218 + 1,024 | 5.2 s | 1,570 tok/s | 49.1 tok/s |
+| 131,099 + 512 tokens | 62.2 / 90.3 s | **2,106** / 1,451 tok/s | **47.4** / 43.3 tok/s |
+| 32,799 + 512 | 15.3 / 14.8 s | 2,141 / 2,219 tok/s | 50.3 / 49.5 tok/s |
+| 8,218 + 1,024 | 5.2 / 5.7 s | 1,570 / 1,452 tok/s | 49.1 / 48.5 tok/s |
 
-Decode depends mainly on RAM bandwidth: with the server restricted to 16 cores of the benchmark CPU it ran at
+Some prefill requests take a slower path (~1,450 instead of ~2,100 tok/s); see the known issue in the
+benchmark report. Decode depends mainly on RAM bandwidth: with the server restricted to 16 cores of the benchmark CPU it ran at
 39–47 tok/s, with 8 cores at 34–36 tok/s. Quick start:
 
 ```bash
@@ -63,6 +64,9 @@ git clone https://github.com/DominikBucko/qwen38-flash-next-3090.git && cd qwen3
 cp .env.example .env    # set MODEL_DIR
 make build-image && make serve
 ```
+
+Or skip the build with the published image:
+`IMAGE=ghcr.io/dominikbucko/qwen38-flash-next-3090@sha256:7f176605b59c462af21b1b62fd854f9f3cca96e3d11a295581297483d45490a3 make serve`.
 
 See the [benchmark report](https://github.com/DominikBucko/qwen38-flash-next-3090/blob/main/benchmarks/2026-09-30/README.md),
 [how it works](https://github.com/DominikBucko/qwen38-flash-next-3090/blob/main/docs/how-it-works.md) and the
